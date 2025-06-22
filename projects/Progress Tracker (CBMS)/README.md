@@ -1,1 +1,1 @@
-
+An interactive dashboard designed to track the progress of a Map Data Processor at the Philippine Statistics Authority (PSA). It features a search bar for easy navigation and quick access to information on processed areas.
