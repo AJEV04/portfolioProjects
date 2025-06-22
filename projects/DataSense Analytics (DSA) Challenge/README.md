@@ -1,1 +1,1 @@
-
+A nationwide competition where participants transform a healthcare dataset into actionable insights using Power BI Desktop. The challenge focuses on real-world skills like data cleaning, analysis, modeling, and dashboard design.
