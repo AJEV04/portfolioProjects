@@ -1,0 +1,131 @@
+/* SQL query practice and for portfolio project, with a dataset from kaggle about COVID-19 in 
+the Philippines Jan to May 2020. Props to ChatGPT for helping creating the possible queries to practice SQL skills.*/
+
+-- *************************************************************************** --
+-- Basic (1–3): Fundamentals
+-- 1. Retrieve all records of patients from "San Juan" who recovered.
+		
+        SELECT *
+        from COVID19CaseProgressLog
+        WHERE muni_city = 'San Juan' And status = 'recovered';
+        
+-- 2. Count how many patients fall into each age_group.
+		
+        SELECT  age_group, 
+        		count(*) as patients_count
+        FROM COVID19CaseProgressLog
+        GROUP by age_group;
+        
+
+-- 3. List all unique combinations of province and region.
+
+		SELECT DISTINCT(province),
+        		region
+        FROM COVID19CaseProgressLog;
+        
+-- Intermediate (4–7): Aggregation & Subqueries
+-- 4. Find the average age of patients grouped by their status.
+		
+        SELECT status, ROUND(avg(age), 0) as age_average
+        FROM COVID19CaseProgressLog
+        GROUP BY status;
+        
+-- 5. Which city had the most total reported cases? Use a subquery in the WHERE or FROM clause.
+
+		select muni_city, total_cases
+        FROM
+        	(SELECT muni_city, count(*) as total_cases
+        	from COVID19CaseProgressLog
+        	group by muni_city) as city_counts
+        WHERE total_cases = (
+          SELECT max(city_count)
+          FROM (
+            SELECT count(*) as city_count
+        	from COVID19CaseProgressLog
+        	group by muni_city
+            ) as counts
+        );
+
+-- 6. List the provinces where the death count is above the average death count per province.
+-- (Hint: Use a subquery to compute the average.)
+
+		
+		with cte_table (province, death_count) 
+            as (
+              	SELECT SUM(CASE when status = "Died" then 1 end) as death_count,
+                province
+        		from COVID19CaseProgressLog
+            	GROUP BY province
+               )
+            
+        SELECT province, death_count
+        FROM cte_table
+        WHERE death_count > (
+          SELECT avg(death_count)
+          from cte_table
+        );
+
+-- 7. Show the top 3 cities with the highest recovery rate (recovered cases / total cases).
+		
+        with cte_table (recovered_cases, total_cases, muni_city) 
+        	AS (SELECT COUNT(case when status = "Recovered" Then 1 end) as recovered_cases,
+        		count(*) as total_cases,
+                muni_city
+        from COVID19CaseProgressLog
+        group BY muni_city)
+        
+        SELECT muni_city, ROUND((recovered_cases / total_cases)*100, 2) as recovery_rate
+        from cte_table
+        ORDER by recovery_rate DESC, muni_city
+        LIMIT 3;
+        
+-- Advanced (8–10): CTEs, Logic, Date Analysis
+-- 8. Using a CTE, get the total number of cases per region, then calculate the percentage of total national cases for each.
+
+		with cte_table (region, total_region_cases)
+        	as (SELECT region,
+                	COUNT(*) as total_region_cases
+       	 		FROM COVID19CaseProgressLog
+        		group by region)
+        
+        SELECT region, ROUND((total_region_cases / (SELECT count(*) from COVID19CaseProgressLog))*100, 2) as percent_of_cases
+        from cte_table
+        order by percent_of_cases desc;
+
+-- 9. Use a CTE to get the number of deaths and recoveries per city, and calculate the recovery-to-death ratio.
+		
+        with cte_table (recovered, died, muni_city)
+        	as (SELECT COUNT(case when status = 'Recovered' then 1 end) as recovered,
+        		COUNT(CASE when status = 'Died' then 1 end) as died,
+                muni_city
+        FROM COVID19CaseProgressLog
+        GROUP by muni_city)
+        
+        SELECT muni_city,
+        		ROUND((recovered / died), 2) as recovered_to_death_ratio
+        from cte_table
+        where died > 0
+        ORDER BY recovered_to_death_ratio DESC;    
+        
+-- *************************************************************************** --
+-- ****Bonus Query**** --
+-- Shows the Status Summary per Age Group --
+		SELECT age_group,
+        	COUNT(case when status = "Admitted" then 1 end) AS Admitted,
+            COUNT(case when status = "Died" then 1 end) as Died,
+            COUNT(case when status = "For validation" then 1 end) AS For_validation,
+            COUNT(case when status = "Home quarantined" then 1 end) AS Home_quarantined,
+            COUNT(case when status = "Recovered" then 1 end) AS Recovered
+        from COVID19CaseProgressLog
+        GROUP BY age_group;
+        
+-- Shows the cases per day --
+        SELECT region, 
+        	province, 
+            muni_city, 
+            MONTHNAME(date_announced) AS month, 
+            DAYNAME(date_announced) as day , 
+            count(*) as cases
+        from COVID19CaseProgressLog
+        group by region, province, muni_city;
+-- *************************************************************************** --
