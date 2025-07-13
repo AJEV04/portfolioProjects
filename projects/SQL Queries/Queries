@@ -79,7 +79,7 @@ the Philippines Jan to May 2020. Props to ChatGPT for helping creating the possi
         ORDER by recovery_rate DESC, muni_city
         LIMIT 3;
         
--- Advanced (8–10): CTEs, Logic, Date Analysis
+-- Advanced (8–9): CTEs, Logic, Date Analysis
 -- 8. Using a CTE, get the total number of cases per region, then calculate the percentage of total national cases for each.
 
 		with cte_table (region, total_region_cases)
