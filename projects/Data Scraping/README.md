@@ -82,4 +82,13 @@ Each scraper saves a clean `.xlsx` file inside its `output/` folder:
 - No confidential or proprietary data is included
 - Scripts were built for legitimate data analysis purposes
 
+- To reproduce the outputs, you will need to reconfigure the scripts to match 
+your local setup. This includes:
+- Updating file paths to match your directory structure
+- Installing the required dependencies
+- Setting up Playwright for your environment
+
+The scripts were built and tested on a specific local machine setup 
+and may require adjustments before running on a different system.
+
 ---
