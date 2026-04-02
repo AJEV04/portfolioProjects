@@ -7,23 +7,6 @@ at Unilever Philippines.
 
 ---
 
-## 📁 Project Structure
-```
-data-scraper/
-├── main.py               # runs all scrapers at once
-├── cmci/
-│   ├── cmci_scraper.py   # scrapes CMCI competitiveness data
-│   └── output/
-├── revenue/
-│   ├── revenue_scraper.py # extracts COA revenue data from PDFs
-│   └── output/
-└── population/
-    ├── population_scraper.py # collects PSA population data
-    └── output/
-```
-
----
-
 ## 🛠️ Tools & Libraries
 
 - **Python** — core language
@@ -53,26 +36,12 @@ pip install playwright pdfplumber pandas
 playwright install
 ```
 
-**Run all scrapers at once:**
-```
-python main.py
-```
-
 **Run individual scrapers:**
 ```
 python cmci/cmci_scraper.py
 python revenue/revenue_scraper.py
 python population/population_scraper.py
 ```
-
----
-
-## 📂 Output
-
-Each scraper saves a clean `.xlsx` file inside its `output/` folder:
-- `cmci/output/cmci_data.csv`
-- `revenue/output/revenue_data.csv`
-- `population/output/population_data.csv`
 
 ---
 
